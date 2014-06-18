@@ -10,7 +10,10 @@ from watchdog.observers import Observer
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
-
+try:
+    from django.utils.six.moves import _thread as thread
+except ImportError:
+    from django.utils.six.moves import _dummy_thread as thread
 
 if not hasattr(settings, 'CIVET_PRECOMPILED_ASSET_DIR'):
     raise AssertionError(
@@ -26,7 +29,8 @@ sass_arguments = getattr(
 
 
 def precompile_and_watch_coffee_and_sass_assets():
-    precompile_coffee_and_sass_assets(watch=True)
+    thread.start_new_thread(
+        precompile_coffee_and_sass_assets, (), {'watch': True})
 
 
 def precompile_coffee_and_sass_assets(watch=False):
