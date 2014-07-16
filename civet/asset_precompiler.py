@@ -259,7 +259,7 @@ def precompile_sass(sass_files, watch=False):
     args = ['sass', '--watch']
     args.extend(sass_arguments)
     args.extend(dir_pairs)
-    process = subprocess.Popen(args)
+    process = subprocess.Popen(args, close_fds=True)
 
     # Django's autoreload calls sys.exit() before reloading, and we want to
     # kill the Sass process we've spawned at that point.
