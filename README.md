@@ -70,6 +70,13 @@ To recompile everything, just quit the server, delete the entire
 again.
 
 
+Sample Project
+--------------
+
+We have included a sample project in `testsite/` to demonstrate how Civet
+works with Django.
+
+
 Motivation
 ----------
 

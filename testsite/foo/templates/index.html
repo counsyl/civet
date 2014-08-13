@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Civet</title>
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+    <link rel="stylesheet" href="{% static 'shared.css' %}">
+    <link rel="stylesheet" href="{% static 'local.css' %}">
+    <link rel="stylesheet" href="{% static 'library.css' %}">
+    <script src="{% static 'global.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="{% static 'shared.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="{% static 'local.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="{% static 'library.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+</head>
+<body>
+
+<div class="content">
+<p>Hello, sassy Coffee</p>
+</div>
+
+</body>
+</html>
