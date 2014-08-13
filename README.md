@@ -8,7 +8,7 @@ Civet
 Civet precompiles Sass and CoffeeScript files in your Django project when
 you use the `runserver` command. It will also watch the file changes for you.
 Therefore, you can edit your Sass and CoffeeScript files and expect
-`runserver` to recompile those files upon save, just like it restarts the
+`runserver` to recompile those files upon save, just like it how restarts the
 app server when you make changes to your Python source code
 
 
@@ -38,14 +38,14 @@ precompiling. It will also start watch for file changes.
 Sass and CoffeeScript Versions Supported
 ----------------------------------------
 
-Civet is known to work with the following versions of Sass and CoffeeScript
+Civet is known to work with the following versions of Sass and CoffeeScript:
 
-* Sass 3.2.5 and above with Compass 0.12.2
-* CoffeeScript 1.6.3
+* Sass 3.2.5+ and Compass 0.12.2+
+* CoffeeScript 1.6.3+
 
 
-"We Only Use Sass (or CoffeeScript)"
-------------------------------------
+"But We Only Use Sass (or CoffeeScript)"
+----------------------------------------
 
 If your project doesn't use Sass and therefore doesn't contain any Sass files,
 Civet won't invoke the Sass compiler and therefore it's ok if you don't have
@@ -56,7 +56,7 @@ Customizable Options
 --------------------
 
 If you want to use additional CoffeeScript or Sass compiling options, add
-these to your `settings.py`. Here we show the default values Civet uses:
+these to your `settings.py`. Here are the default values Civet uses:
 
     CIVET_COFFEE_SCRIPT_ARGUMENTS = ('--compile', '--map')
     CIVET_SASS_ARGUMENTS = ('--compass',)
@@ -80,9 +80,9 @@ We have developed Civet to solve the following problems:
 
 2. We want our CoffeeScript and Sass assets to be precompiled. It makes no
    sense to compile them on the fly as we serve static assets. Plus, Sass
-   files that have a lot of includes can take a long time to compile
+   files that have a lot of includes can take a long time to process.
    At one point we had a Sass file that took 6 seconds to compile. We don't
-   want our developers to want for 6 seconds every time they reload a page.
+   want our developers to wait for 6 seconds every time they reload a page.
 
 3. Django's static file layout requires Sass and CoffeeScript to watch
    for separate directories. We simply can't have them watch the top-level
