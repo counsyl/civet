@@ -55,11 +55,36 @@ Sass installed. The same rule applies to CoffeeScript files.
 Customizable Options
 --------------------
 
-If you want to use additional CoffeeScript or Sass compiling options, add
-these to your `settings.py`. Here are the default values Civet uses:
+By default, Civet looks for `coffee` and `sass` in your `PATH` environment
+varible. If you want to use specific paths, you can put these in your
+`settings.py`:
+
+  # The paths here are just examples
+  CIVET_COFFEE_BIN = '/opt/local/bin/coffee'
+  CIVET_SASS_BIN = '/opt/local/bin/sass'
+
+For Sass, a lot of people use [Bundler](http://bundler.io/) to manage their
+Ruby command-line tools. This can be especially useful if you also use
+libaries like Compass and want to lock down their versions. Bundler requires
+you to set up a `Gemfile`. To use Bundler to run Sass, add this in your
+`settings.py`:
+
+  CIVET_BUNDLE_GEMFILE = '/some/where/Gemfile'
+
+Please note that `CIVET_BUNDLE_GEMFILE` and `CIVET_SASS_BIN` must not be set
+at the same time. If both are set, Civet will raise an error. Also, by
+default, Civet looks for the tool `bundle` in your `PATH`. If you want to
+use a specific path, set `CIVET_BUNDLE_BIN` in your `settings.py`.
+
+Finally, if you want to use additional CoffeeScript or Sass compiling options,
+add these to your `settings.py`. Here are the default values Civet uses:
 
     CIVET_COFFEE_SCRIPT_ARGUMENTS = ('--compile', '--map')
-    CIVET_SASS_ARGUMENTS = ('--compass',)
+    CIVET_SASS_ARGUMENTS = ()
+
+If you want to, for example, use Compass with Sass, use:
+
+  CIVET_SASS_ARGUMENTS = ('--compass',)
 
 
 Recompile Everything

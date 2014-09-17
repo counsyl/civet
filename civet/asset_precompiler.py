@@ -1,6 +1,8 @@
 import atexit
+from distutils.spawn import find_executable
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -19,36 +21,147 @@ if not hasattr(settings, 'CIVET_PRECOMPILED_ASSET_DIR'):
     raise AssertionError(
         'Must specify CIVET_PRECOMPILED_ASSET_DIR in settings')
 
+# The regex to find Sass if Bundler is used (see CIVET_BUNDLE_GEMFILE below)
+BUNDLE_LIST_SASS_FINDER = re.compile(r'^.+?sass \(\d+\.\d+.+?\)', re.MULTILINE)
+
+# Directory to put the compiled JavaScript and CSS files.
 precompiled_assets_dir = settings.CIVET_PRECOMPILED_ASSET_DIR
 
+# Default CoffeeScript arguments. Normally you shouldn't need to change.
 coffee_arguments = getattr(
     settings, 'CIVET_COFFEE_SCRIPT_ARGUMENTS', ('--compile', '--map'))
 
+# Default Sass arguments. If you use Compass, you will want to add
+# `CIVET_SASS_ARGUMENTS = ('--compass',)` in your `settings.py`.
 sass_arguments = getattr(
-    settings, 'CIVET_SASS_ARGUMENTS', ('--compass',))
+    settings, 'CIVET_SASS_ARGUMENTS', ())
+
+# Location of `coffee`. By default, this will be the one found in $PATH.
+coffee_bin = getattr(
+    settings, 'CIVET_COFFEE_BIN', 'coffee')
+
+# If given, Bundler (http://bundler.io/) will be used to invoke Sass
+# (via `bundle exec sass`) with the designated Gemfile.
+bundle_gemfile = getattr(
+    settings, 'CIVET_BUNDLE_GEMFILE', None)
+
+# Location of Bundler's `bundle`. This is used if settings.CIVET_BUNDLE_GEMFILE
+# is given.
+bundle_bin = getattr(
+    settings, 'CIVET_BUNDLE_BIN', 'bundle')
+
+# Location of `sass`. By default, this will be the one found in $PATH. If both
+# settings.CIVET_BUNDLE_GEMFILE and settings.CIVET_SASS_BIN are set, an
+# error will be raised when precompile_coffee_and_sass_assets() is called.
+sass_bin = getattr(
+    settings, 'CIVET_SASS_BIN', 'sass')
 
 
 def precompile_and_watch_coffee_and_sass_assets():
     thread.start_new_thread(
-        precompile_coffee_and_sass_assets, (), {'watch': True})
+        precompile_coffee_and_sass_assets, (), {
+            'watch': True,
+            'kill_on_error': True
+        })
 
 
-def precompile_coffee_and_sass_assets(watch=False):
+def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
     """Precompile and watch all CoffeeScript and Sass files.
 
     This function has the side effect of adding precompiled_assets_dir to
     settings.STATICFILES_DIRS. Django's staticfiles library uses that list
     to serve static assets.
+
+    Args:
+        watch: If True, the method will continue watching for Sass and
+            CoffeeScript source changes in the background.
+        kill_on_error: If True, the method will trigger a signal before
+            calling `sys.exit()`. If you call this method from the Django
+            `runserver` management command, you need to use this so that you
+            can correctly stop the command's loader thread.
     """
 
+    def raise_error_or_kill():
+        if kill_on_error:
+            # Tell autoreload's loader thread that we're done
+            os.kill(os.getpid(), signal.SIGINT)
+
+            # Terminate the spawned server process
+            sys.exit(1)
+        else:
+            raise AssertionError('Asset precompilation failed.')
+
     if not os.path.exists(precompiled_assets_dir):
-        print 'Precompiling assets into %s' % precompiled_assets_dir
+        print 'Directory created for saving precompiled assets: %s' % (
+            precompiled_assets_dir)
         os.makedirs(precompiled_assets_dir)
 
     if precompiled_assets_dir not in settings.STATICFILES_DIRS:
         settings.STATICFILES_DIRS += (precompiled_assets_dir,)
 
     coffee_files, sass_files = collect_coffee_and_sass_files()
+
+    # Check if `coffee` or `sass` exists
+    if coffee_files:
+        if not find_executable(coffee_bin):
+            if getattr(settings, 'CIVET_COFFEE_BIN', None):
+                print >> sys.stderr, (
+                    'Your project uses CoffeeScript, but "%s" in not '
+                    'found.', coffee_bin)
+            else:
+                print >> sys.stderr, (
+                    'Your project uses CoffeeScript, but "coffee" is not '
+                    'found in your PATH.')
+            raise_error_or_kill()
+
+    if sass_files:
+        # Make sure that CIVET_SASS_BIN and CIVET_BUNDLE_GEMFILE are not both
+        # set in settings.
+        if (getattr(settings, 'CIVET_SASS_BIN', None) and
+                getattr(settings, 'CIVET_BUNDLE_GEMFILE', None)):
+            print >> sys.stderr, (
+                'CIVET_BUNDLE_GEMFILE and CIVET_SASS_BIN must not be set '
+                'at the same time in settings.')
+            raise_error_or_kill()
+
+        if bundle_gemfile:
+            if not find_executable(bundle_bin):
+                print >> sys.stderr, (
+                    'Your project uses Sass and you have specified a Gemfile '
+                    'to be used with Bundler, but "bundle" is not found in '
+                    'your PATH.')
+                raise_error_or_kill()
+
+            # Now, look for the gem `sass`.
+            args = (bundle_bin, 'list')
+            env = os.environ.copy()
+            env['BUNDLE_GEMFILE'] = bundle_gemfile
+            process = subprocess.Popen(args, stdout=subprocess.PIPE, env=env)
+            stdout, _ = process.communicate()
+
+            if process.returncode != 0:
+                print >> sys.stderr, (
+                    '"bundle list" failed, exit code = %d, messages:\n%s' % (
+                        process.returncode,
+                        '\n'.join("    %s" % ln for ln in stdout.split('\n'))))
+                raise_error_or_kill()
+
+            if not BUNDLE_LIST_SASS_FINDER.search(stdout):
+                print >> sys.stderr, (
+                    'You have specified to use Bundler to run Sass, but '
+                    '"sass" is not included in your bundle.')
+                raise_error_or_kill()
+
+        elif not find_executable(sass_bin):
+            if getattr(settings, 'CIVET_SASS_BIN', None):
+                print >> sys.stderr, (
+                    'Your project uses Sass, but "%s" is not found.' % (
+                        sass_bin))
+            else:
+                print >> sys.stderr, (
+                    'Your project uses Sass, but "sass" is not found in your '
+                    'PATH.')
+            raise_error_or_kill()
 
     try:
         if coffee_files:
@@ -57,13 +170,8 @@ def precompile_coffee_and_sass_assets(watch=False):
             precompile_sass(sass_files, watch=watch)
     except subprocess.CalledProcessError:
         print >> sys.stderr, (
-            'Incomplete asset precompilation, server not started')
-
-        # Tell autoreload's loader thread that we're done
-        os.kill(os.getpid(), signal.SIGINT)
-
-        # Terminate the spawned server process
-        sys.exit(1)
+            'Imcomplete asset precompilation, server not started.')
+        raise_error_or_kill()
 
 
 def collect_src_dst_dir_mappings(src_dst_tuples):
@@ -95,7 +203,7 @@ def compile_coffee(src, dst):
 
     # coffee is smart enough to do mkdir -p for us
     dst_dir, dst_basename = os.path.split(dst)
-    args = ['coffee', '-o', dst_dir]
+    args = [coffee_bin, '-o', dst_dir]
     args.extend(coffee_arguments)
     args.append(src)
     subprocess.check_call(args)
@@ -166,8 +274,10 @@ def precompile_coffee(coffee_files, watch=False):
     """
 
     # Block and compile non-existent or newer files first
+    print 'Start precompiling CoffeeScript files'
     for src, dst in coffee_files:
         compile_coffee(src, dst)
+    print 'End precompiling CoffeeScript files'
 
     if not watch:
         return
@@ -235,6 +345,14 @@ def get_shortest_topmost_directories(dirs):
 def precompile_sass(sass_files, watch=False):
     """Pre-compile Sass source files and watch for changes."""
 
+    if bundle_gemfile:
+        base_args = [bundle_bin, 'exec', 'sass']
+        env = os.environ.copy()
+        env['BUNDLE_GEMFILE'] = bundle_gemfile
+    else:
+        base_args = [sass_bin]
+        env = None
+
     # Collect the directories we want to watch
     dir_map = collect_src_dst_dir_mappings(sass_files)
 
@@ -247,19 +365,26 @@ def precompile_sass(sass_files, watch=False):
     dir_pairs = [':'.join(item) for item in dir_map.iteritems()]
 
     # Block and compile non-existent or newer files first
-    args = ['sass', '--update']
+    print 'Start precompiling Sass files'
+    args = list(base_args)
+    args.append('--update')
     args.extend(sass_arguments)
     args.extend(dir_pairs)
-    subprocess.check_call(args)
+    process = subprocess.Popen(args, env=env)
+    process.wait()
+    if process.returncode != 0:
+        raise subprocess.CalledProcessError(args[0], process.returncode)
+    print 'End precompiling Sass files'
 
     if not watch:
         return
 
     # Start watching with a separate process
-    args = ['sass', '--watch']
+    args = list(base_args)
+    args.append('--watch')
     args.extend(sass_arguments)
     args.extend(dir_pairs)
-    process = subprocess.Popen(args, close_fds=True)
+    process = subprocess.Popen(args, env=env, close_fds=True)
 
     # Django's autoreload calls sys.exit() before reloading, and we want to
     # kill the Sass process we've spawned at that point.
