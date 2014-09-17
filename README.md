@@ -59,9 +59,9 @@ By default, Civet looks for `coffee` and `sass` in your `PATH` environment
 varible. If you want to use specific paths, you can put these in your
 `settings.py`:
 
-  # The paths here are just examples
-  CIVET_COFFEE_BIN = '/opt/local/bin/coffee'
-  CIVET_SASS_BIN = '/opt/local/bin/sass'
+    # The paths here are just examples
+    CIVET_COFFEE_BIN = '/opt/local/bin/coffee'
+    CIVET_SASS_BIN = '/opt/local/bin/sass'
 
 For Sass, a lot of people use [Bundler](http://bundler.io/) to manage their
 Ruby command-line tools. This can be especially useful if you also use
@@ -69,7 +69,7 @@ libaries like Compass and want to lock down their versions. Bundler requires
 you to set up a `Gemfile`. To use Bundler to run Sass, add this in your
 `settings.py`:
 
-  CIVET_BUNDLE_GEMFILE = '/some/where/Gemfile'
+    CIVET_BUNDLE_GEMFILE = '/some/where/Gemfile'
 
 Please note that `CIVET_BUNDLE_GEMFILE` and `CIVET_SASS_BIN` must not be set
 at the same time. If both are set, Civet will raise an error. Also, by
@@ -84,7 +84,7 @@ add these to your `settings.py`. Here are the default values Civet uses:
 
 If you want to, for example, use Compass with Sass, use:
 
-  CIVET_SASS_ARGUMENTS = ('--compass',)
+    CIVET_SASS_ARGUMENTS = ('--compass',)
 
 
 Recompile Everything
