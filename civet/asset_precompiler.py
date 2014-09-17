@@ -1,4 +1,5 @@
 import atexit
+from distutils.spawn import find_executable
 import json
 import os
 import re
@@ -19,8 +20,6 @@ except ImportError:
 if not hasattr(settings, 'CIVET_PRECOMPILED_ASSET_DIR'):
     raise AssertionError(
         'Must specify CIVET_PRECOMPILED_ASSET_DIR in settings')
-
-from utils import file_exists_in_env_path
 
 # The regex to find Sass if Bundler is used (see CIVET_BUNDLE_GEMFILE below)
 BUNDLE_LIST_SASS_FINDER = re.compile(r'^.+?sass \(\d+\.\d+.+?\)', re.MULTILINE)
@@ -51,8 +50,9 @@ bundle_gemfile = getattr(
 bundle_bin = getattr(
     settings, 'CIVET_BUNDLE_BIN', 'bundle')
 
-# Location of `sass`. By default, this will be the one found in $PATH. If
-# settings.CIVET_BUNDLE_GEMFILE is given, this is ignored.
+# Location of `sass`. By default, this will be the one found in $PATH. If both
+# settings.CIVET_BUNDLE_GEMFILE and settings.CIVET_SASS_BIN are set, an
+# error will be raised when precompile_coffee_and_sass_assets() is called.
 sass_bin = getattr(
     settings, 'CIVET_SASS_BIN', 'sass')
 
@@ -81,7 +81,7 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
             can correctly stop the command's loader thread.
     """
 
-    def kill():
+    def raise_error_or_kill():
         if kill_on_error:
             # Tell autoreload's loader thread that we're done
             os.kill(os.getpid(), signal.SIGINT)
@@ -103,20 +103,34 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
 
     # Check if `coffee` or `sass` exists
     if coffee_files:
-        if not file_exists_in_env_path(coffee_bin):
-            print >> sys.stderr, (
-                'Your project uses CoffeeScript, but "coffee" is not found in '
-                'your PATH.')
-            kill()
+        if not find_executable(coffee_bin):
+            if getattr(settings, 'CIVET_COFFEE_BIN', None):
+                print >> sys.stderr, (
+                    'Your project uses CoffeeScript, but "%s" in not '
+                    'found.', coffee_bin)
+            else:
+                print >> sys.stderr, (
+                    'Your project uses CoffeeScript, but "coffee" is not '
+                    'found in your PATH.')
+            raise_error_or_kill()
 
     if sass_files:
+        # Make sure that CIVET_SASS_BIN and CIVET_BUNDLE_GEMFILE are not both
+        # set in settings.
+        if (getattr(settings, 'CIVET_SASS_BIN', None) and
+                getattr(settings, 'CIVET_BUNDLE_GEMFILE', None)):
+            print >> sys.stderr, (
+                'CIVET_BUNDLE_GEMFILE and CIVET_SASS_BIN must not be set '
+                'at the same time in settings.')
+            raise_error_or_kill()
+
         if bundle_gemfile:
-            if not file_exists_in_env_path(bundle_bin):
+            if not find_executable(bundle_bin):
                 print >> sys.stderr, (
                     'Your project uses Sass and you have specified a Gemfile '
                     'to be used with Bundler, but "bundle" is not found in '
                     'your PATH.')
-                kill()
+                raise_error_or_kill()
 
             # Now, look for the gem `sass`.
             args = (bundle_bin, 'list')
@@ -130,19 +144,24 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
                     '"bundle list" failed, exit code = %d, messages:\n%s' % (
                         process.returncode,
                         '\n'.join("    %s" % ln for ln in stdout.split('\n'))))
-                kill()
+                raise_error_or_kill()
 
             if not BUNDLE_LIST_SASS_FINDER.search(stdout):
                 print >> sys.stderr, (
                     'You have specified to use Bundler to run Sass, but '
                     '"sass" is not included in your bundle.')
-                kill()
+                raise_error_or_kill()
 
-        elif not file_exists_in_env_path(sass_bin):
-            print >> sys.stderr, (
-                'Your project uses Sass, but "sass" is not found in your '
-                'PATH.')
-            kill()
+        elif not find_executable(sass_bin):
+            if getattr(settings, 'CIVET_SASS_BIN', None):
+                print >> sys.stderr, (
+                    'Your project uses Sass, but "%s" is not found.' % (
+                        sass_bin))
+            else:
+                print >> sys.stderr, (
+                    'Your project uses Sass, but "sass" is not found in your '
+                    'PATH.')
+            raise_error_or_kill()
 
     try:
         if coffee_files:
@@ -152,7 +171,7 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
     except subprocess.CalledProcessError:
         print >> sys.stderr, (
             'Imcomplete asset precompilation, server not started.')
-        kill()
+        raise_error_or_kill()
 
 
 def collect_src_dst_dir_mappings(src_dst_tuples):

@@ -71,10 +71,10 @@ you to set up a `Gemfile`. To use Bundler to run Sass, add this in your
 
   CIVET_BUNDLE_GEMFILE = '/some/where/Gemfile'
 
-Please note that if you use `CIVET_BUNDLE_GEMFILE`, the setting
-`CIVET_SASS_BIN` will be ignored. Also, by default, Civet looks for the tool
-`bundle` in your `PATH`. If you want to use a specific path, set
-`CIVET_BUNDLE_BIN` in your `settings.py`.
+Please note that `CIVET_BUNDLE_GEMFILE` and `CIVET_SASS_BIN` must not be set
+at the same time. If both are set, Civet will raise an error. Also, by
+default, Civet looks for the tool `bundle` in your `PATH`. If you want to
+use a specific path, set `CIVET_BUNDLE_BIN` in your `settings.py`.
 
 Finally, if you want to use additional CoffeeScript or Sass compiling options,
 add these to your `settings.py`. Here are the default values Civet uses:
