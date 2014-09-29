@@ -456,7 +456,7 @@ class CoffeeScriptFSEventHandler(FileSystemEventHandler):
         if event.is_directory:
             print >> sys.stderr,  (
                 'Warning: Directory %s deleted' % event.src_path)
-        elif is_coffee(event.src_path) and is_coffee(event.dst_path):
+        elif is_coffee(event.src_path) and is_coffee(event.dest_path):
             print >> sys.stderr,  (
                 'Warning: File renamed {0} -> {1}'.format(
                     event.src_path, event.dest_path))
