@@ -114,6 +114,8 @@ INSTALLED_APPS = (
     'foo'
 )
 
+CIVET_SASS_ARGUMENTS = ('--compass', )
+
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging
