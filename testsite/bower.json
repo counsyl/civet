@@ -3,10 +3,10 @@
   "version": "1.0.1",
   "homepage": "https://github.com/counsyl/civet",
   "authors": [
-    "counsyl.com"
+    "opensource@counsyl.com"
   ],
   "description": "Civet test app",
-  "license": "MIT",
+  "license": "Apache License 2.0",
   "ignore": [
     "**/.*",
     "node_modules",
