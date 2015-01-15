@@ -56,6 +56,9 @@ bundle_bin = getattr(
 sass_bin = getattr(
     settings, 'CIVET_SASS_BIN', 'sass')
 
+additional_ignore_patterns = getattr(
+    settings, 'CIVET_IGNORE_PATTERNS', [])
+
 
 def precompile_and_watch_coffee_and_sass_assets():
     thread.start_new_thread(
@@ -477,6 +480,12 @@ def collect_coffee_and_sass_files():
     # django.contrib.staticfiles.management.commands.collectstatic, and we
     # just repeat it here verbatim
     ignore_patterns = ['CVS', '.*', '*~']
+
+    # Optionally exclude more patterns from Civet's watchful eyes.  Examples
+    # include directories for NPM managed packages (node_modules) or Bower
+    # managed packages (bower_components).
+    if additional_ignore_patterns:
+      ignore_patterns += additional_ignore_patterns
 
     def get_output_path(base, ext):
         return os.path.join(precompiled_assets_dir, base + ext)
