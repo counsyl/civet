@@ -1,0 +1,21 @@
+{
+  "name": "testsite",
+  "version": "1.0.1",
+  "homepage": "https://github.com/counsyl/civet",
+  "authors": [
+    "counsyl.com"
+  ],
+  "description": "Civet test app",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "bootstrap-sass-official": "~3.3.1"
+  }
+}

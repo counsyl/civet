@@ -36,3 +36,6 @@ nosetests.xml
 
 # Virtual environment
 venv
+
+# Bower packages
+bower_components
