@@ -3,19 +3,31 @@
 <html>
 <head>
     <title>Test Civet</title>
-    <link rel="stylesheet" href="{% static 'global.css' %}">
-    <link rel="stylesheet" href="{% static 'shared.css' %}">
-    <link rel="stylesheet" href="{% static 'local.css' %}">
-    <link rel="stylesheet" href="{% static 'library.css' %}">
-    <script src="{% static 'global.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'shared.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'local.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'library.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    <!-- should be found -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'sass/shared.css' %}">
+    <link rel="stylesheet" href="{% static 'css/local.css' %}">
+    <link rel="stylesheet" href="{% static 'sass/library.css' %}">
+
+    <!-- should produce error -->
+    <link rel="stylesheet" href="{% static 'some_managed_package/test.css' %}">
+    <link rel="stylesheet" href="{% static 'bower_components/test/test_styles/main.css' %}">
+
+    <!-- should be found -->
+    <script src="{% static 'js/global.js' %}" async defer></script>
+    <script src="{% static 'coffee/shared.js' %}" async defer></script>
+    <script src="{% static 'js/local.js' %}" async defer></script>
+    <script src="{% static 'coffee/library.js' %}" async defer></script>
+
+    <!-- should produce error -->
+    <script src="{% static 'some_managed_package/random.js' %}" async defer></script>
 </head>
 <body>
 
 <div class="content">
 <p>Hello, sassy Coffee</p>
+<p class="foo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium, ipsum.</p>
+<p class="bar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ratione, doloremque?</p>
 </div>
 
 </body>
