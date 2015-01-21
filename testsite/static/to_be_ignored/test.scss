@@ -1,0 +1,6 @@
+.foo {
+  text-decoration: underline;
+  &.blah {
+    font-weight: bold;
+  }
+}

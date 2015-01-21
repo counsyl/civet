@@ -3,19 +3,49 @@
 <html>
 <head>
     <title>Test Civet</title>
-    <link rel="stylesheet" href="{% static 'global.css' %}">
-    <link rel="stylesheet" href="{% static 'shared.css' %}">
-    <link rel="stylesheet" href="{% static 'local.css' %}">
-    <link rel="stylesheet" href="{% static 'library.css' %}">
-    <script src="{% static 'global.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'shared.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'local.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="{% static 'library.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    <!-- should be found -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'sass/shared.css' %}">
+    <link rel="stylesheet" href="{% static 'css/local.css' %}">
+    <link rel="stylesheet" href="{% static 'sass/library.css' %}">
+
+    <!--
+    This should produce an error unless compiled manually.
+
+    The purpose of this is to demonstrate that civet is properly ignoring files
+    in `to_be_ignored` and the more deeply nested 'bower_components/test/test_Styles' dir,
+    which are specified in CIVET_IGNORE (settings.py).
+    -->
+    <link rel="stylesheet" href="{% static 'to_be_ignored/test.css' %}">
+
+    <!--
+    this will not produce an error, per se, but if you inspect main.scss and its import,
+    _sass_partial.scss, you'll notice that .foo should display {color: blue;}.  That it does
+    not is further proof that these files are ignored by Civet.
+     -->
+    <link rel="stylesheet" href="{% static 'bower_components/test/test_styles/main.css' %}">
+
+    <!-- should be found -->
+    <script src="{% static 'js/global.js' %}" async defer></script>
+    <script src="{% static 'coffee/shared.js' %}" async defer></script>
+    <script src="{% static 'js/local.js' %}" async defer></script>
+    <script src="{% static 'coffee/library.js' %}" async defer></script>
+
+    <!--
+    This should produce an error unless compiled manually.
+
+    The purpose of this is to demonstrate that civet is properly ignoring files
+    in `to_be_ignored`, which is specified in CIVET_IGNORE (settings.py)
+    -->
+    <script src="{% static 'to_be_ignored/random.js' %}" async defer></script>
 </head>
 <body>
 
 <div class="content">
-<p>Hello, sassy Coffee</p>
+  <p>Hello, sassy Coffee</p>
+  <p class="foo">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium, ipsum.</p>
+  <p class="foo blah">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium, ipsum.</p>
+  <p class="bar">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ratione, doloremque?</p>
 </div>
 
 </body>
