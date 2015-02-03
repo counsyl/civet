@@ -68,6 +68,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "bower_components"),
 )
 
 # List of finder classes that know how to find static files in
@@ -115,7 +116,8 @@ INSTALLED_APPS = (
 )
 
 CIVET_SASS_ARGUMENTS = ('--compass', )
-CIVET_IGNORE = ['bower_components', 'to_be_ignored']
+CIVET_IGNORE_PATTERNS = ['']
+CIVET_IGNORE_DIRS = ['bower_components', 'to_be_ignored']
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

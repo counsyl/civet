@@ -89,10 +89,19 @@ If you want to, for example, use Compass with Sass, use:
 You can also define patterns (files or directories) for Civet to ignore by
 setting:
 
-    CIVET_IGNORE = ['bower_components', 'node_modules']
+    # As an exmaple, this will cause Civet to ignore files with 'coffee' in the
+    # name or path.
+    CIVET_IGNORE_PATTERNS = ['coffee']
 
 This gets extended into the ignore_patterns list defined in
 `django.contrib.staticfiles.management.commands.collectstatic`.
+
+You can also define staticfile directories you want Civet to ignore by setting:
+
+    # This will cause Civet to ignore files located in 'bower_components' or
+    # 'node_modules' even if those folders are included in STATICFILES_DIRS.
+    CIVET_IGNORE_DIRS = ['bower_components', 'node_modules']
+
 
 This is particularly useful when using a package manager such as [Bower](http://bower.io/)
 or [NPM](https://www.npmjs.com/).  These managers often install packages that
