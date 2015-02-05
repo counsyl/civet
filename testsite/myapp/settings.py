@@ -116,7 +116,6 @@ INSTALLED_APPS = (
 )
 
 CIVET_SASS_ARGUMENTS = ('--compass', )
-CIVET_IGNORE_PATTERNS = ['']
 CIVET_IGNORE_DIRS = ['bower_components', 'to_be_ignored']
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

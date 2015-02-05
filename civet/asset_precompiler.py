@@ -62,6 +62,7 @@ additional_ignore_patterns = getattr(
 ignore_dirs = getattr(
     settings, 'CIVET_IGNORE_DIRS', [])
 
+
 def precompile_and_watch_coffee_and_sass_assets():
     thread.start_new_thread(
         precompile_coffee_and_sass_assets, (), {
@@ -484,7 +485,7 @@ def collect_coffee_and_sass_files():
     ignore_patterns = ['CVS', '.*', '*~']
 
     if additional_ignore_patterns:
-      ignore_patterns.extend(additional_ignore_patterns)
+        ignore_patterns.extend(additional_ignore_patterns)
 
     def get_output_path(base, ext):
         return os.path.join(precompiled_assets_dir, base + ext)
