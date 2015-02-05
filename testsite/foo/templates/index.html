@@ -16,14 +16,14 @@
     in `to_be_ignored` and the more deeply nested 'bower_components/test/test_Styles' dir,
     which are specified in CIVET_IGNORE (settings.py).
     -->
-    <link rel="stylesheet" href="{% static 'to_be_ignored/test.css' %}">
+    <link rel="stylesheet" href="{% static 'test.css' %}">
 
     <!--
     this will not produce an error, per se, but if you inspect main.scss and its import,
     _sass_partial.scss, you'll notice that .foo should display {color: blue;}.  That it does
     not is further proof that these files are ignored by Civet.
      -->
-    <link rel="stylesheet" href="{% static 'bower_components/test/test_styles/main.css' %}">
+    <link rel="stylesheet" href="{% static 'test/test_styles/main.css' %}">
 
     <!-- should be found -->
     <script src="{% static 'js/global.js' %}" async defer></script>
@@ -37,7 +37,7 @@
     The purpose of this is to demonstrate that civet is properly ignoring files
     in `to_be_ignored`, which is specified in CIVET_IGNORE (settings.py)
     -->
-    <script src="{% static 'to_be_ignored/random.js' %}" async defer></script>
+    <script src="{% static 'random.js' %}" async defer></script>
 </head>
 <body>
 

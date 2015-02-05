@@ -57,7 +57,10 @@ sass_bin = getattr(
     settings, 'CIVET_SASS_BIN', 'sass')
 
 additional_ignore_patterns = getattr(
-    settings, 'CIVET_IGNORE', None)
+    settings, 'CIVET_IGNORE_PATTERNS', None)
+
+ignore_dirs = getattr(
+    settings, 'CIVET_IGNORE_DIRS', [])
 
 
 def precompile_and_watch_coffee_and_sass_assets():
@@ -482,7 +485,7 @@ def collect_coffee_and_sass_files():
     ignore_patterns = ['CVS', '.*', '*~']
 
     if additional_ignore_patterns:
-      ignore_patterns.extend(additional_ignore_patterns)
+        ignore_patterns.extend(additional_ignore_patterns)
 
     def get_output_path(base, ext):
         return os.path.join(precompiled_assets_dir, base + ext)
@@ -494,6 +497,7 @@ def collect_coffee_and_sass_files():
     # one for the /static directories of the apps listed in INSTALLED_APPS.
     # This allows us to discover all the files we are interested in across
     # the entire project, including the libraries it uses.
+
     for finder in finders.get_finders():
         for partial_path, storage in finder.list(ignore_patterns):
             # Get the actual path of the asset
@@ -503,9 +507,13 @@ def collect_coffee_and_sass_files():
             src_path = os.path.realpath(full_path)
 
             base, ext = os.path.splitext(partial_path)
-            if ext == '.coffee':
-                coffee_files.append((src_path, get_output_path(base, '.js')))
-            elif ext == '.scss' or ext == '.sass':
-                sass_files.append((src_path, get_output_path(base, '.css')))
+
+            if not any(dirs in full_path for dirs in ignore_dirs):
+                if ext == '.coffee':
+                    coffee_files.append((src_path,
+                                        get_output_path(base, '.js')))
+                elif ext == '.scss' or ext == '.sass':
+                    sass_files.append((src_path,
+                                      get_output_path(base, '.css')))
 
     return coffee_files, sass_files
