@@ -176,7 +176,7 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
             precompile_sass(sass_files, watch=watch)
     except subprocess.CalledProcessError:
         print >> sys.stderr, (
-            'Imcomplete asset precompilation, server not started.')
+            'Incomplete asset precompilation, server not started.')
         raise_error_or_kill()
 
 
