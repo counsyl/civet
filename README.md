@@ -20,13 +20,15 @@ In Django 1.6 and before, add it right after
 `django.contrib.staticfiles`. In Django 1.7 and later, add it
 before `django.contrib.staticfiles`:
 
-    INSTALLED_APPS = (
-        # ...
-        # 'civet',  # Uncomment for Django 1.7 and later
-        'django.contrib.staticfiles',
-        # 'civet',  # Uncomment for Django 1.6 and later
-        # ...
-    )
+```python
+INSTALLED_APPS = (
+    # ...
+    # 'civet',  # Uncomment for Django 1.7 and later
+    'django.contrib.staticfiles',
+    # 'civet',  # Uncomment for Django 1.6 and later
+    # ...
+)
+```
 
 Then add a `CIVET_PRECOMPILED_ASSET_DIR` setting that tells Civet where to
 put the precompiled assets. For example:
