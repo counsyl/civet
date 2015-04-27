@@ -25,7 +25,7 @@ INSTALLED_APPS = (
     # ...
     # 'civet',  # Uncomment for Django 1.7 and later
     'django.contrib.staticfiles',
-    # 'civet',  # Uncomment for Django 1.6 and later
+    # 'civet',  # Uncomment for Django 1.6 and earlier
     # ...
 )
 ```
