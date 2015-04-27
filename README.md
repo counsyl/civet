@@ -15,13 +15,16 @@ app server when you make changes to your Python source code
 Usage
 -----
 
-In your `settings.py`, add Civet to your `INSTALLED_APPS` right after
-`django.contrib.staticfiles`:
+In your `settings.py`, add Civet to your `INSTALLED_APPS` setting.
+In Django 1.6 and before, add it right after
+`django.contrib.staticfiles`. In Django 1.7 and later, add it
+before `django.contrib.staticfiles`:
 
     INSTALLED_APPS = (
         # ...
+        # 'civet',  # Uncomment for Django 1.7 and later
         'django.contrib.staticfiles',
-        'civet',
+        # 'civet',  # Uncomment for Django 1.6 and later
         # ...
     )
 
