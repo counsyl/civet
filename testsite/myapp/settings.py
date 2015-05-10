@@ -1,5 +1,9 @@
 # Django settings for myapp project.
 import os
+from distutils.version import StrictVersion
+
+from django import get_version
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -104,16 +108,28 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 
 TEMPLATE_DIRS = []
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'civet',
-    'foo'
-)
+if StrictVersion(get_version()) < StrictVersion('1.7'):
+    INSTALLED_APPS = (
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.sites',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'civet',
+        'foo'
+    )
+else:
+    INSTALLED_APPS = (
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.sites',
+        'django.contrib.messages',
+        'civet',
+        'django.contrib.staticfiles',
+        'foo'
+    )
 
 CIVET_SASS_ARGUMENTS = ('--compass', )
 CIVET_IGNORE_DIRS = ['bower_components', 'to_be_ignored']
