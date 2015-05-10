@@ -1,3 +1,4 @@
+from __future__ import print_function
 import atexit
 from distutils.spawn import find_executable
 import json
@@ -98,8 +99,8 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
             raise AssertionError('Asset precompilation failed.')
 
     if not os.path.exists(precompiled_assets_dir):
-        print 'Directory created for saving precompiled assets: %s' % (
-            precompiled_assets_dir)
+        print('Directory created for saving precompiled assets: %s' % (
+            precompiled_assets_dir))
         os.makedirs(precompiled_assets_dir)
 
     if precompiled_assets_dir not in settings.STATICFILES_DIRS:
@@ -111,13 +112,13 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
     if coffee_files:
         if not find_executable(coffee_bin):
             if getattr(settings, 'CIVET_COFFEE_BIN', None):
-                print >> sys.stderr, (
+                print(
                     'Your project uses CoffeeScript, but "%s" in not '
-                    'found.', coffee_bin)
+                    'found.' % coffee_bin, file=sys.stderr)
             else:
-                print >> sys.stderr, (
+                print(
                     'Your project uses CoffeeScript, but "coffee" is not '
-                    'found in your PATH.')
+                    'found in your PATH.', file=sys.stderr)
             raise_error_or_kill()
 
     if sass_files:
@@ -125,17 +126,17 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
         # set in settings.
         if (getattr(settings, 'CIVET_SASS_BIN', None) and
                 getattr(settings, 'CIVET_BUNDLE_GEMFILE', None)):
-            print >> sys.stderr, (
+            print(
                 'CIVET_BUNDLE_GEMFILE and CIVET_SASS_BIN must not be set '
-                'at the same time in settings.')
+                'at the same time in settings.', file=sys.stderr)
             raise_error_or_kill()
 
         if bundle_gemfile:
             if not find_executable(bundle_bin):
-                print >> sys.stderr, (
+                print(
                     'Your project uses Sass and you have specified a Gemfile '
                     'to be used with Bundler, but "bundle" is not found in '
-                    'your PATH.')
+                    'your PATH.', file=sys.stderr)
                 raise_error_or_kill()
 
             # Now, look for the gem `sass`.
@@ -146,27 +147,28 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
             stdout, _ = process.communicate()
 
             if process.returncode != 0:
-                print >> sys.stderr, (
+                lines = stdout.split('\n')
+                messages = '\n'.join("    %s" % ln for ln in lines)
+                print(
                     '"bundle list" failed, exit code = %d, messages:\n%s' % (
-                        process.returncode,
-                        '\n'.join("    %s" % ln for ln in stdout.split('\n'))))
+                        process.returncode, messages), file=sys.stderr)
                 raise_error_or_kill()
 
             if not BUNDLE_LIST_SASS_FINDER.search(stdout):
-                print >> sys.stderr, (
+                print(
                     'You have specified to use Bundler to run Sass, but '
-                    '"sass" is not included in your bundle.')
+                    '"sass" is not included in your bundle.', file=sys.stderr)
                 raise_error_or_kill()
 
         elif not find_executable(sass_bin):
             if getattr(settings, 'CIVET_SASS_BIN', None):
-                print >> sys.stderr, (
+                print(
                     'Your project uses Sass, but "%s" is not found.' % (
-                        sass_bin))
+                        sass_bin), file=sys.stderr)
             else:
-                print >> sys.stderr, (
+                print(
                     'Your project uses Sass, but "sass" is not found in your '
-                    'PATH.')
+                    'PATH.', file=sys.stderr)
             raise_error_or_kill()
 
     try:
@@ -175,8 +177,9 @@ def precompile_coffee_and_sass_assets(watch=False, kill_on_error=False):
         if sass_files:
             precompile_sass(sass_files, watch=watch)
     except subprocess.CalledProcessError:
-        print >> sys.stderr, (
-            'Incomplete asset precompilation, server not started.')
+        print(
+            'Incomplete asset precompilation, server not started.',
+            file=sys.stderr)
         raise_error_or_kill()
 
 
@@ -205,7 +208,7 @@ def compile_coffee(src, dst):
         else:
             os.remove(dst)
 
-    print 'Compiling %s' % src
+    print('Compiling %s' % src)
 
     # coffee is smart enough to do mkdir -p for us
     dst_dir, dst_basename = os.path.split(dst)
@@ -280,10 +283,10 @@ def precompile_coffee(coffee_files, watch=False):
     """
 
     # Block and compile non-existent or newer files first
-    print 'Start precompiling CoffeeScript files'
+    print('Start precompiling CoffeeScript files')
     for src, dst in coffee_files:
         compile_coffee(src, dst)
-    print 'End precompiling CoffeeScript files'
+    print('End precompiling CoffeeScript files')
 
     if not watch:
         return
@@ -299,7 +302,7 @@ def precompile_coffee(coffee_files, watch=False):
     # The observer will start its own thread. We don't care about cleaning it
     # up since it goes down with the server's process. See
     # django.utils.autoreload.python_reloader
-    print 'Start watching for CoffeeScript changes'
+    print('Start watching for CoffeeScript changes')
     observer.start()
 
     # Stop the observer when Django's autoreload calls sys.exit() before
@@ -368,10 +371,10 @@ def precompile_sass(sass_files, watch=False):
 
     # sass can update and monitor multiple directories with the arguments
     # in the form of <src_dir_1>:<dst_dir_1> <src_dir_2>:<dst_dir_2> ...
-    dir_pairs = [':'.join(item) for item in dir_map.iteritems()]
+    dir_pairs = [':'.join(item) for item in dir_map.items()]
 
     # Block and compile non-existent or newer files first
-    print 'Start precompiling Sass files'
+    print('Start precompiling Sass files')
     args = list(base_args)
     args.append('--update')
     args.extend(sass_arguments)
@@ -380,7 +383,7 @@ def precompile_sass(sass_files, watch=False):
     process.wait()
     if process.returncode != 0:
         raise subprocess.CalledProcessError(args[0], process.returncode)
-    print 'End precompiling Sass files'
+    print('End precompiling Sass files')
 
     if not watch:
         return
@@ -429,9 +432,9 @@ class CoffeeScriptFSEventHandler(FileSystemEventHandler):
     def compile(self, src_path):
         dst_path = self.get_dst_path(src_path)
         if not dst_path:
-            print >> sys.stderr, (
-                'Warning: No matching destination found for source {0}, and ' +
-                'the source is not compiled').format(src_path)
+            print(
+                'Warning: No matching destination found for source {0}, and '
+                'the source is not compiled'.format(src_path), file=sys.stderr)
         else:
             try:
                 compile_coffee(src_path, dst_path)
@@ -441,18 +444,19 @@ class CoffeeScriptFSEventHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if event.is_directory:
-            print >> sys.stderr,  (
+            print(
                 'Warning: New directory %s created but not watched' %
-                event.src_path)
+                event.src_path, file=sys.stderr)
         elif is_coffee(event.src_path):
             self.compile(event.src_path)
 
     def on_deleted(self, event):
         if event.is_directory:
-            print >> sys.stderr,  (
-                'Warning: Directory %s deleted' % event.src_path)
+            print(
+                'Warning: Directory %s deleted' % event.src_path,
+                file=sys.stderr)
         elif is_coffee(event.src_path):
-            print >> sys.stderr,  'Warning: File %s deleted' % event.src_path
+            print('Warning: File %s deleted' % event.src_path, file=sys.stderr)
 
     def on_modified(self, event):
         if not event.is_directory and is_coffee(event.src_path):
@@ -460,12 +464,13 @@ class CoffeeScriptFSEventHandler(FileSystemEventHandler):
 
     def on_moved(self, event):
         if event.is_directory:
-            print >> sys.stderr,  (
-                'Warning: Directory %s deleted' % event.src_path)
+            print(
+                'Warning: Directory %s deleted' % event.src_path,
+                file=sys.stderr)
         elif is_coffee(event.src_path) and is_coffee(event.dest_path):
-            print >> sys.stderr,  (
+            print(
                 'Warning: File renamed {0} -> {1}'.format(
-                    event.src_path, event.dest_path))
+                    event.src_path, event.dest_path), file=sys.stderr)
             self.compile(event.dest_path)
 
 
