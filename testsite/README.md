@@ -27,6 +27,6 @@ Once you have everything, run this to see Civet in action:
 
     python manage.py runserver
 
-Now, modify any Sass or CoffeeScript file in this project, and observer how
-the affected Sass/CoffeeScript files get recomplied, with relevant messages
+Now, modify any Sass or CoffeeScript file in this project, and observe how
+the affected Sass/CoffeeScript files get recompiled, with relevant messages
 appearing in runserver's output.
