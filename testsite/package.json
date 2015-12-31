@@ -1,0 +1,35 @@
+{
+  "name": "civet",
+  "version": "1.0.0",
+  "dependencies": {
+    "bower": "^1.3.12",
+    "coffee-script": "1.6.3",
+    "rx": "2.4.1",
+    "babel-cli": "^6.0.0",
+    "babel-preset-es2015": "^6.3.0"
+  },
+  "devDependencies": {
+    "coffeelint": "1.0.7",
+    "jshint": "2.8.0",
+    "nodelint": "0.6.2",
+    "eslint": "~1.10.3",
+    "babel-eslint": "~5.0.0-beta6"
+  },
+  "engines": {
+    "node": ">=0.10.25"
+  },
+  "description": "`website.git` is the deployable Django application that powers all of the [counsyl.com](https://counsyl.com) domain, including the user-facing \"brochure\" pages, the healthcare portal, the patient results pages, the inventory pages, the wetlab pages, and much more.",
+  "main": " ",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": " "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.counsyl.com:dev/website.git"
+  },
+  "author": "dev@counsyl.com",
+  "license": "private"
+}

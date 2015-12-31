@@ -17,6 +17,7 @@ You also want to install Sass, Compass, and CoffeeScript:
     gem install sass
     gem install compass
     npm install -g coffee-script
+    npm install babel-cli babel-preset-es2015
 
 You may also want to install Civet in development mode. Back in this project's
 repository root, run:

@@ -1,0 +1,4 @@
+{
+  "only": ["**.es6"],
+  "presets": ["babel-preset-es2015"],
+}
