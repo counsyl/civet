@@ -27,12 +27,6 @@ bundle_gemfile = getattr(
 bundle_bin = getattr(
     settings, 'CIVET_BUNDLE_BIN', 'bundle')
 
-# Location of `sass`. By default, this will be the one found in $PATH. If both
-# settings.CIVET_BUNDLE_GEMFILE and settings.CIVET_SASS_BIN are set, an
-# error will be raised when precompile_coffee_and_sass_assets() is called.
-sass_bin = getattr(
-    settings, 'CIVET_SASS_BIN', 'sass')
-
 # Default Sass arguments. If you use Compass, you will want to add
 # `CIVET_SASS_ARGUMENTS = ('--compass',)` in your `settings.py`.
 sass_arguments = getattr(
