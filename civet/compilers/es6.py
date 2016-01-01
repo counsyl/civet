@@ -22,7 +22,7 @@ def mkdir_p(path):
 class ES6Compiler(Compiler):
     """Civet compiler for Ecmascript 6 using Babel.
     """
-    name = "Ecmascript 6"
+    name = "ECMAScript 6"
     executable_name = 'babel'
     executable_setting = 'CIVET_BABEL_BIN'
 

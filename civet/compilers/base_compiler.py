@@ -60,7 +60,8 @@ class CompilerFSEventHandler(FileSystemEventHandler):
         dst_dir = self.src_dst_dir_map.get(src_dir)
         if not dst_dir:
             return None
-        dst_filename = os.path.splitext(src_filename)[0] + '.js'
+        dst_filename = self.compiler.get_dest_path(
+            *os.path.splitext(src_filename))
         dst_path = os.path.join(dst_dir, dst_filename)
         return dst_path
 
@@ -76,9 +77,6 @@ class CompilerFSEventHandler(FileSystemEventHandler):
             except subprocess.CalledProcessError:
                 # coffee already reported the actual error to stderr
                 pass
-
-    def _get_base_and_ext(self, path):
-        return os.path.splitext(path)
 
     def on_created(self, event):
         if event.is_directory:
@@ -182,7 +180,7 @@ class Compiler(object):
         """Invoke the appropriate compiler to compile src_path to dst_path.
 
         Upon any compiler error, dst will be deleted if it exists. This
-        prevents stale JS files from being served.
+        prevents stale asset files from being served.
         """
         if os.path.exists(dst_path):
             if os.path.getmtime(dst_path) >= os.path.getmtime(src_path):
