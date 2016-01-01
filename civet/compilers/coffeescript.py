@@ -32,7 +32,7 @@ class CoffeescriptCompiler(Compiler):
     def get_dest_path(self, base, ext):
         return os.path.join(self.precompiled_assets_dir, base + '.js')
 
-    def get_arguments(self, src_path, dst_path):
+    def get_command_with_arguments(self, src_path, dst_path):
         dst_dir, dst_basename = os.path.split(dst_path)
 
         # coffee is smart enough to do mkdir -p for us

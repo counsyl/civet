@@ -45,7 +45,7 @@ class ES6Compiler(Compiler):
     def get_dest_path(self, base, ext):
         return os.path.join(self.precompiled_assets_dir, base + '.js')
 
-    def get_arguments(self, src_path, dst_path):
+    def get_command_with_arguments(self, src_path, dst_path):
         return [
             self.executable,
             '--source-maps','true',

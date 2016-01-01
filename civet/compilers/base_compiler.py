@@ -155,7 +155,7 @@ class Compiler(object):
 
     @property
     def executable_setting(self):
-        """Django settings name for executable path
+        """Django settings name for executable path.
         """
         raise NotImplementedError(
             "Subclasses must implement executable_setting.")
@@ -172,7 +172,7 @@ class Compiler(object):
         """
         raise NotImplementedError("Subclasses must implement get_dest_path()")
 
-    def get_arguments(self, src_path, dst_path):
+    def get_command_with_arguments(self, src_path, dst_path):
         """Return compiler executable and arguments needed to compile src_path
         to dst_path.
         """
@@ -191,7 +191,7 @@ class Compiler(object):
                 os.remove(dst_path)
 
         print('Compiling %s' % src_path)
-        args = self.get_arguments(src_path, dst_path)
+        args = self.get_command_with_arguments(src_path, dst_path)
         subprocess.check_call(args)
 
     def compile_all(self, src_dest_tuples):
