@@ -43,7 +43,7 @@ class ES6Compiler(Compiler):
     def get_arguments(self, src_path, dst_path):
         return [
             self.executable,
-            '--source-maps true',
+            '--source-maps','true',
             '-o',
             dst_path,
             src_path,
@@ -53,5 +53,3 @@ class ES6Compiler(Compiler):
         dst_dir, dst_basename = os.path.split(dst_path)
         mkdir_p(dst_dir)
         super(ES6Compiler, self).compile(src_path, dst_path)
-
-        # TODO: handle sourcemap rewriting or use correct babel arguments.
