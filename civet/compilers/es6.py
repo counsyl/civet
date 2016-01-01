@@ -1,7 +1,12 @@
 import errno
 import os
 
+from django.conf import settings
+
 from civet.compilers.base_compiler import Compiler
+
+
+es6_extension = getattr(settings, 'CIVET_ES6_EXTENSION', '.js')
 
 
 def mkdir_p(path):
@@ -35,7 +40,7 @@ class ES6Compiler(Compiler):
         return 'CIVET_BABEL_BIN'
 
     def matches(self, base, ext):
-        return ext == '.es6'
+        return ext == es6_extension
 
     def get_dest_path(self, base, ext):
         return os.path.join(self.precompiled_assets_dir, base + '.js')
