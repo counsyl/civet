@@ -34,17 +34,9 @@ sass_arguments = getattr(
 
 
 class SassCompiler(Compiler):
-    @property
-    def name(self):
-        return "Sass"
-
-    @property
-    def executable_setting(self):
-        return 'CIVET_SASS_BIN'
-
-    @property
-    def executable_name(self):
-        return 'sass'
+    name = "Sass"
+    executable_setting = 'CIVET_SASS_BIN'
+    executable_name = 'sass'
 
     def __init__(self, precompiled_assets_dir, kill_on_error):
         # Make sure that CIVET_SASS_BIN and CIVET_BUNDLE_GEMFILE are not both
@@ -62,7 +54,7 @@ class SassCompiler(Compiler):
                     'Your project uses Sass and you have specified a Gemfile '
                     'to be used with Bundler, but "bundle" is not found in '
                     'your PATH.', file=sys.stderr)
-                raise_error_or_kill()
+                raise_error_or_kill(kill_on_error)
 
             # Now, look for the gem `sass`.
             args = (bundle_bin, 'list')
@@ -141,3 +133,4 @@ class SassCompiler(Compiler):
             process.kill()
 
         atexit.register(cleanup)
+        print("Watching for Sass changes")

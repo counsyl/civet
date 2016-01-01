@@ -22,22 +22,15 @@ def mkdir_p(path):
 class ES6Compiler(Compiler):
     """Civet compiler for Ecmascript 6 using Babel.
     """
+    name = "Ecmascript 6"
+    executable_name = 'babel'
+    executable_setting = 'CIVET_BABEL_BIN'
+
     def __init__(self, precompiled_assets_dir, kill_on_error):
         super(ES6Compiler, self).__init__(precompiled_assets_dir,
                                           kill_on_error)
         self.args = [('--compile', '--map')]
 
-    @property
-    def name(self):
-        return "Ecmascript 6"
-
-    @property
-    def executable_name(self):
-        return 'babel'
-
-    @property
-    def executable_setting(self):
-        return 'CIVET_BABEL_BIN'
 
     def matches(self, base, ext):
         return ext == es6_extension

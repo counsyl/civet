@@ -8,23 +8,16 @@ from civet.compilers.base_compiler import Compiler
 
 
 class CoffeescriptCompiler(Compiler):
+    name = "CoffeeScript"
+    executable_name = 'coffee'
+    executable_setting = 'CIVET_COFFEE_BIN'
+
     def __init__(self, precompiled_assets_dir, kill_on_error):
         super(CoffeescriptCompiler, self).__init__(precompiled_assets_dir,
                                                    kill_on_error)
         self.args = getattr(
             settings, 'CIVET_COFFEE_SCRIPT_ARGUMENTS', ('--compile', '--map'))
 
-    @property
-    def name(self):
-        return "CoffeeScript"
-
-    @property
-    def executable_name(self):
-        return 'coffee'
-
-    @property
-    def executable_setting(self):
-        return 'CIVET_COFFEE_BIN'
 
     def matches(self, base, ext):
         return ext == '.coffee'
