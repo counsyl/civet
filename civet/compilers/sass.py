@@ -86,7 +86,6 @@ class SassCompiler(Compiler):
         if not hasattr(self, 'args'):
             self.args = [self.executable]
             self.env = None
-        self.args.append('--update')
         self.args.extend(sass_arguments)
 
     def matches(self, base, ext):
@@ -112,6 +111,7 @@ class SassCompiler(Compiler):
         # Block and compile non-existent or newer files first
         print('Start precompiling Sass files')
         args = list(self.args)
+        args.append('--update')
         args.extend(self._get_dir_pairs(sass_files))
         process = subprocess.Popen(args, env=self.env)
         process.wait()
@@ -123,7 +123,6 @@ class SassCompiler(Compiler):
         # Start watching with a separate process
         args = list(self.args)
         args.append('--watch')
-        args.extend(sass_arguments)
         args.extend(self._get_dir_pairs(files))
         process = subprocess.Popen(args, env=self.env, close_fds=True)
 
