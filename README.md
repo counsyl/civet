@@ -5,9 +5,9 @@ Civet
 
 (Picture credit: [Leendertz](http://en.wikipedia.org/wiki/Kopi_Luwak#mediaviewer/File:Luwak-Katze_in_Kepahiang.jpg))
 
-Civet precompiles Sass and CoffeeScript files in your Django project when
-you use the `runserver` command. It will also watch the file changes for you.
-Therefore, you can edit your Sass and CoffeeScript files and expect
+Civet precompiles asset files (such as Sass, CoffeeScript and ECMAScript 6) in
+your Django project when you use the `runserver` command. It will also watch
+the file changes for you. Therefore, you can edit your asset files and expect
 `runserver` to recompile those files upon save, just like it how restarts the
 app server when you make changes to your Python source code
 
@@ -40,33 +40,39 @@ first check to see if there are new Sass and CoffeeScript files that need
 precompiling. It will also start watch for file changes.
 
 
-Sass and CoffeeScript Versions Supported
+Asset Versions Supported
 ----------------------------------------
 
-Civet is known to work with the following versions of Sass and CoffeeScript:
+Civet is known to work with the following compilers:
 
 * Sass 3.2.5+ and Compass 0.12.2+
 * CoffeeScript 1.6.3+
+* Babel 6.3.17+
 
 
 "But We Only Use Sass (or CoffeeScript)"
 ----------------------------------------
 
-If your project doesn't use Sass and therefore doesn't contain any Sass files,
-Civet won't invoke the Sass compiler and therefore it's ok if you don't have
-Sass installed. The same rule applies to CoffeeScript files.
+You can choose which compilers Civet uses (and add your own) via a setting:
+
+```python
+CIVET_COMPILER_CLASSES = (
+    civet.compilers.es6.ES6Compiler,
+)
+```
 
 
 Customizable Options
 --------------------
 
-By default, Civet looks for `coffee` and `sass` in your `PATH` environment
-varible. If you want to use specific paths, you can put these in your
-`settings.py`:
+By default, Civet looks for `coffee`, `sass`, and `babel` in your `PATH`
+environment varible. If you want to use specific paths, you can put these in
+your `settings.py`:
 
     # The paths here are just examples
     CIVET_COFFEE_BIN = '/opt/local/bin/coffee'
     CIVET_SASS_BIN = '/opt/local/bin/sass'
+    CIVET_BABEL_BIN = '/opt/local/bin/babel'
 
 For Sass, a lot of people use [Bundler](http://bundler.io/) to manage their
 Ruby command-line tools. This can be especially useful if you also use
@@ -112,6 +118,10 @@ This is particularly useful when using a package manager such as [Bower](http://
 or [NPM](https://www.npmjs.com/).  These managers often install packages that
 include their own build systems, configurations, and files that are incompatible
 with how Civet compiles assets.
+
+For ES6, you can specify the NODE_PATH used for babel by setting
+`CIVET_ES6_NODE_PATH`.
+
 
 Recompile Everything
 --------------------
