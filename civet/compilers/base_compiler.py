@@ -60,9 +60,9 @@ class CompilerFSEventHandler(FileSystemEventHandler):
         dst_dir = self.src_dst_dir_map.get(src_dir)
         if not dst_dir:
             return None
-        dst_filename = self.compiler.get_dest_path(
-            *os.path.splitext(src_filename))
-        dst_path = os.path.join(dst_dir, dst_filename)
+        dst_path = os.path.join(dst_dir, src_filename)
+        dst_path = self.compiler.get_dest_path(
+            *os.path.splitext(dst_path))
         return dst_path
 
     def compile(self, src_path):
@@ -138,6 +138,8 @@ class Compiler(object):
                         executable_name=self.executable_name
                     ), file=sys.stderr)
             raise_error_or_kill(kill_on_error)
+        if not hasattr(self, 'env'):
+            self.env = os.environ.copy()
 
     @property
     def name(self):
@@ -188,9 +190,8 @@ class Compiler(object):
             else:
                 os.remove(dst_path)
 
-        print('Compiling %s' % src_path)
         args = self.get_command_with_arguments(src_path, dst_path)
-        subprocess.check_call(args)
+        subprocess.check_call(args, env=self.env)
 
     def compile_all(self, src_dest_tuples):
         """Pre-compile given (src, dest) file path tuples.
