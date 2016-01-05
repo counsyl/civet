@@ -43,7 +43,7 @@ class ES6Compiler(Compiler):
     def get_command_with_arguments(self, src_path, dst_path):
         return [
             self.executable,
-            '--source-maps','true',
+            '--source-maps', 'true',
             '-o',
             dst_path,
             src_path,

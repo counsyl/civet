@@ -1,8 +1,8 @@
 from __future__ import print_function
 import atexit
 import os
-import subprocess
 import re
+import subprocess
 import sys
 
 from distutils.spawn import find_executable

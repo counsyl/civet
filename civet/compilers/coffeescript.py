@@ -18,7 +18,6 @@ class CoffeescriptCompiler(Compiler):
         self.args = getattr(
             settings, 'CIVET_COFFEE_SCRIPT_ARGUMENTS', ('--compile', '--map'))
 
-
     def matches(self, base, ext):
         return ext == '.coffee'
 
