@@ -7,6 +7,7 @@ from civet.compilers.base_compiler import Compiler
 
 
 es6_extension = getattr(settings, 'CIVET_ES6_EXTENSION', '.js')
+node_path = getattr(settings, 'CIVET_ES6_NODE_PATH', None)
 
 
 def mkdir_p(path):
@@ -30,7 +31,8 @@ class ES6Compiler(Compiler):
         super(ES6Compiler, self).__init__(precompiled_assets_dir,
                                           kill_on_error)
         self.args = [('--compile', '--map')]
-
+        if node_path:
+            self.env.update(NODE_PATH=node_path)
 
     def matches(self, base, ext):
         return ext == es6_extension
