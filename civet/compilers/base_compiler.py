@@ -191,6 +191,7 @@ class Compiler(object):
                 os.remove(dst_path)
 
         args = self.get_command_with_arguments(src_path, dst_path)
+        print("Compiling {} file {}".format(self.name, src_path))
         subprocess.check_call(args, env=self.env)
 
     def compile_all(self, src_dest_tuples):
