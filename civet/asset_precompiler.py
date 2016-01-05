@@ -43,13 +43,13 @@ compiler_classes = getattr(
 
 def precompile_and_watch_assets():
     thread.start_new_thread(
-        _precompile_assets, (), {
+        precompile_assets, (), {
             'watch': True,
             'kill_on_error': True
         })
 
 
-def _precompile_assets(watch=False, kill_on_error=False):
+def precompile_assets(watch=False, kill_on_error=False):
     """Precompile and watch assets for all configured Compilers.
 
     This function has the side effect of adding precompiled_assets_dir to
