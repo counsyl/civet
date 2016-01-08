@@ -75,11 +75,17 @@ class CoffeescriptCompiler(Compiler):
         map_path = os.path.join(dst_dir, map_filename)
 
         if os.path.exists(map_path):
-            map_data = None
             with open(map_path) as f:
-                map_data = json.load(f)
-                map_data['sourceRoot'] = ''
-                map_data['sources'] = [os.path.basename(src_path)]
-
-            with open(map_path, 'w') as f:
-                json.dump(map_data, f)
+                try:
+                    map_data = json.load(f)
+                except ValueError as err:
+                    f.seek(0)
+                    print("Warning: could not read valid sourcemap JSON from "
+                          "{}. Exception is:\n{}\n\nContents are:\n{}"
+                          .format(map_path, err, f.read()))
+                    return
+                else:
+                    map_data['sourceRoot'] = ''
+                    map_data['sources'] = [os.path.basename(src_path)]
+                    with open(map_path, 'w') as f:
+                        json.dump(map_data, f)
