@@ -84,8 +84,7 @@ class CoffeescriptCompiler(Compiler):
                           "{}. Exception is:\n{}\n\nContents are:\n{}"
                           .format(map_path, err, f.read()))
                     return
-                else:
-                    map_data['sourceRoot'] = ''
-                    map_data['sources'] = [os.path.basename(src_path)]
-                    with open(map_path, 'w') as f:
-                        json.dump(map_data, f)
+            map_data['sourceRoot'] = ''
+            map_data['sources'] = [os.path.basename(src_path)]
+            with open(map_path, 'w') as f:
+                json.dump(map_data, f)
