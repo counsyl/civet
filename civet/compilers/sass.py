@@ -62,6 +62,7 @@ class SassCompiler(Compiler):
             env['BUNDLE_GEMFILE'] = bundle_gemfile
             process = subprocess.Popen(args, stdout=subprocess.PIPE, env=env)
             stdout, _ = process.communicate()
+            stdout = stdout.decode(sys.getdefaultencoding(), errors='ignore')
 
             if process.returncode != 0:
                 lines = stdout.split('\n')
